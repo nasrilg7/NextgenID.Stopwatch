@@ -27,7 +27,6 @@
         #timer {
             font-size: 2em;
             font-weight: bold;
-            color: red;
             margin: 20px;
             color: #0F52BA;
             font-size: 3em;
@@ -51,6 +50,13 @@
                 transform: scale(1.05);
             }
 
+        #timeNow {
+            color: #0F52BA;
+        }
+        #dateNow {
+            color: #0F52BA;
+        }
+
     </style>
 </head>
 <body>
@@ -59,14 +65,17 @@
 
     <div id="timer">00:45</div>
 
-    <button id="startPauseBtn">Start</button>
-    <button id="clearBtn" disabled>Clear</button>
+    <button id="startPauseBtn" hidden>Start</button>
+    <button id="clearBtn" disabled hidden>Clear</button>
 
+    <div id="timeNow"></div>
+    <div id="dateNow"></div>
 
     <script>
         let countdown;
         let isRunning = false;
-        let totalSeconds = 45;
+        let grandTotalSeconds = 5;
+        let totalSeconds = grandTotalSeconds;
 
         const timerDisplay = document.getElementById("timer");
         const startPauseBtn = document.getElementById("startPauseBtn");
@@ -86,9 +95,10 @@
                 countdown = setTimeout(updateCountdown, 1000);
             } else {
                 timerDisplay.textContent = "Time's up!";
+                timerDisplay.style.color = "#ff2400";
                 isRunning = false;
-                startPauseBtn.textContent = "Start";
-                startPauseBtn.disabled = true;
+                startPauseBtn.textContent = "Restart";
+                clearBtn.hidden = true;
             }
         }
 
@@ -96,12 +106,13 @@
             if (!isRunning) {
                 // Fetch values from input fields only when starting
                 if (totalSeconds === 0) {
-                    totalSeconds = 45;
+                    resetTimer();
                 }
 
                 if (totalSeconds > 0) {
                     isRunning = true;
                     startPauseBtn.textContent = "Pause";
+                    clearBtn.hidden = false;
                     updateCountdown();
                 }
             } else {
@@ -114,18 +125,75 @@
 
         function resetTimer() {
             clearTimeout(countdown);
-            totalSeconds = 45;
+            totalSeconds = grandTotalSeconds;
             updateTimerDisplay();
             isRunning = false;
             startPauseBtn.textContent = "Start";
             startPauseBtn.disabled = false;
             clearBtn.disabled = true;
+            clearBtn.hidden = true;
+            timerDisplay.style.color = "#0F52BA";
         }
 
         startPauseBtn.addEventListener("click", toggleTimer);
         clearBtn.addEventListener("click", resetTimer);
 
+
+        startPauseBtn.hidden = false;
+
         updateTimerDisplay();
+
+        function showTime() {
+            var date = new Date();
+            var h = date.getHours(); // 0 - 23
+            var m = date.getMinutes(); // 0 - 59
+            var s = date.getSeconds(); // 0 - 59
+            var session = "AM";
+
+            if (h == 0) {
+                h = 12;
+            }
+
+            if (h > 12) {
+                h = h - 12;
+                session = "PM";
+            }
+
+            h = (h < 10) ? "0" + h : h;
+            m = (m < 10) ? "0" + m : m;
+
+            var time = h + ":" + m + " " + session;
+            document.getElementById("timeNow").innerText = time;
+            document.getElementById("timeNow").textContent = time;
+
+            setTimeout(showTime, 1000);
+
+        }
+
+        function showDate() {
+            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const months = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+
+            let date = new Date();
+            const dayName = days[date.getDay()];
+            const dayNumber = date.getDate();
+            const monthName = months[date.getMonth()];
+            const year = date.getFullYear();
+
+            // Determine the correct ordinal suffix (st, nd, rd, th)
+            const suffix = (dayNumber === 1 || dayNumber === 21 || dayNumber === 31) ? "st" :
+                (dayNumber === 2 || dayNumber === 22) ? "nd" :
+                    (dayNumber === 3 || dayNumber === 23) ? "rd" : "th";
+
+            let dateNow = `${dayName} the ${dayNumber}${suffix} of ${monthName}, ${year}`;
+            document.getElementById("dateNow").innerText = dateNow;
+            document.getElementById("dateNow").textContent = dateNow;
+
+        }
+
+        showTime();
+        showDate();
     </script>
 
 </body>
