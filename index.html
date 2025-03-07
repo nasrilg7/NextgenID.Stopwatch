@@ -144,33 +144,33 @@
         updateTimerDisplay();
 
         function showTime() {
-            var date = new Date();
-            var h = date.getHours(); // 0 - 23
-            var m = date.getMinutes(); // 0 - 59
-            var s = date.getSeconds(); // 0 - 59
-            var session = "AM";
+            let d = new Date();
 
-            if (h == 0) {
-                h = 12;
+            let hr = d.getHours();
+
+            let min = d.getMinutes();
+
+            if (min < 10) {
+                min = "0" + min;
             }
 
-            if (h > 12) {
-                h = h - 12;
+            let ampm = " AM";
+
+            if( hr > 12 ) {
+                hr -= 12;
+                ampm = " PM";
             }
 
-            if (h >= 12) {
-                session = "PM";
+            if (hr < 10) {
+                hr = "0" + hr;
             }
 
-            h = (h < 10) ? "0" + h : h;
-            m = (m < 10) ? "0" + m : m;
+            let time =  hr + ":" + min + ampm;
 
-            var time = h + ":" + m + " " + session;
             document.getElementById("timeNow").innerText = time;
             document.getElementById("timeNow").textContent = time;
 
             setTimeout(showTime, 1000);
-
         }
 
         function showDate() {
